@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Marcelo Fiorino — Transporte Privado de Pasajeros</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* ── Paleta principal ── */
+      --red:        #D42B2B;
+      --red-dark:   #A81F1F;
+      --red-light:  #E84444;
+      --amber:      #F59E0B;
+      --amber-dark: #D97706;
+      --amber-light:#FCD34D;
+      --orange:     #EA580C;
+
+      /* ── Gradientes de acento ── */
+      --grad:       linear-gradient(135deg, var(--red) 0%, var(--orange) 50%, var(--amber) 100%);
+      --grad-h:     linear-gradient(135deg, var(--red-light) 0%, var(--orange) 50%, var(--amber-light) 100%);
+      --grad-text:  linear-gradient(90deg, var(--red-light), var(--amber));
+
+      /* ── Neutros ── */
+      --black:      #0A0A0A;
+      --dark:       #111111;
+      --gray:       #1A1A1A;
+      --gray-mid:   #242424;
+      --gray-hi:    #2E2E2E;
+      --white:      #F9F8F5;
+      --muted:      #7A7A72;
+      --border:     rgba(255,255,255,0.06);
+      --border-hot: rgba(245,158,11,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Barlow', sans-serif; background: var(--black); color: var(--white); overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--grad); border-radius: 2px; }
+
+    /* ════════════════════════════════
+       NAV
+    ════════════════════════════════ */
+    nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 200;
+      padding: 0 3.5rem; height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(10,10,10,0.94); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      transition: height 0.3s;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.9rem; text-decoration: none; }
+    .logo-svg { width: 44px; height: 44px; flex-shrink: 0; }
+    .logo-text { display: flex; flex-direction: column; line-height: 1; }
+    .logo-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white); }
+    .logo-sub { font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { font-family: 'Barlow Condensed', sans-serif; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.25s; }
+    .nav-links a:hover { color: var(--amber); }
+    .nav-cta { background: var(--grad); color: var(--white) !important; padding: 0.52rem 1.4rem; clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%); transition: opacity 0.25s !important; }
+    .nav-cta:hover { opacity: 0.85; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s; }
+
+    /* ════════════════════════════════
+       HERO
+    ════════════════════════════════ */
+    .hero {
+      min-height: 100vh; display: grid; grid-template-columns: 55% 45%;
+      position: relative; overflow: hidden; padding-top: 68px;
+    }
+    .hero::after { content: ''; position: absolute; top: 0; bottom: 0; left: 50%; width: 100px; background: var(--black); transform: skewX(-3deg); z-index: 3; }
+
+    .hero-left { position: relative; z-index: 4; display: flex; flex-direction: column; justify-content: center; padding: 5rem 5rem 5rem 3.5rem; }
+
+    .hero-tag { display: inline-flex; align-items: center; gap: 0.6rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.73rem; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: var(--amber); margin-bottom: 1.8rem; opacity: 0; animation: fadeUp 0.6s 0.1s forwards; }
+    .hero-tag::before { content: ''; display: block; width: 26px; height: 2px; background: var(--grad); }
+
+    .hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(3.8rem, 6.5vw, 7rem); font-weight: 900; line-height: 0.92; letter-spacing: -0.01em; text-transform: uppercase; margin-bottom: 2rem; opacity: 0; animation: fadeUp 0.6s 0.25s forwards; }
+    .hero-title .t-red { color: var(--red); display: block; }
+    .hero-title .t-outline { display: block; -webkit-text-stroke: 2px var(--white); color: transparent; }
+    .hero-title .t-amber { display: block; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    .hero-slogan { font-size: 1rem; font-weight: 300; color: var(--muted); margin-bottom: 2.8rem; line-height: 1.6; max-width: 440px; opacity: 0; animation: fadeUp 0.6s 0.4s forwards; }
+    .hero-slogan strong { color: var(--white); font-weight: 500; }
+
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.6s 0.55s forwards; }
+
+    .btn-grad { display: inline-flex; align-items: center; gap: 0.6rem; background: var(--grad); color: var(--white); padding: 0.9rem 2rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%); transition: opacity 0.25s, transform 0.2s; position: relative; overflow: hidden; }
+    .btn-grad::after { content: ''; position: absolute; inset: 0; background: var(--grad-h); opacity: 0; transition: opacity 0.3s; }
+    .btn-grad:hover::after { opacity: 1; }
+    .btn-grad:hover { transform: translateY(-2px); }
+    .btn-grad span { position: relative; z-index: 1; }
+    .btn-grad svg { position: relative; z-index: 1; }
+
+    .btn-outline { display: inline-flex; align-items: center; gap: 0.5rem; border: 1.5px solid rgba(255,255,255,0.15); color: var(--white); padding: 0.9rem 1.8rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.88rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%); transition: border-color 0.25s, color 0.25s; }
+    .btn-outline:hover { border-color: var(--amber); color: var(--amber); }
+
+    .hero-right { position: relative; z-index: 2; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; opacity: 0; animation: fadeIn 1.1s 0.3s forwards; }
+    .hero-bg img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.4) contrast(1.1) saturate(0.6); }
+    .hero-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to right,var(--black) 0%,transparent 40%), linear-gradient(to top,var(--black) 0%,transparent 45%); }
+    .hero-watermark { position: absolute; bottom: 1rem; right: -1rem; font-family: 'Barlow Condensed', sans-serif; font-size: 9rem; font-weight: 900; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.04); text-transform: uppercase; line-height: 1; pointer-events: none; z-index: 5; }
+    .cap-badge { position: absolute; top: 3rem; right: 2.5rem; z-index: 6; background: var(--grad); clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%); padding: 0.8rem 1.5rem; text-align: center; opacity: 0; animation: fadeIn 0.6s 1.1s forwards; }
+    .cap-badge .cap-n { font-family: 'Barlow Condensed', sans-serif; font-size: 2.2rem; font-weight: 900; line-height: 1; }
+    .cap-badge .cap-l { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.9; }
+
+    /* ════════════════════════════════
+       TICKER
+    ════════════════════════════════ */
+    .ticker { overflow: hidden; height: 42px; display: flex; align-items: center; background: var(--gray); border-top: 1px solid var(--border-hot); border-bottom: 1px solid var(--border-hot); }
+    .ticker-track { display: flex; animation: ticker 22s linear infinite; white-space: nowrap; }
+    .ticker-item { font-family: 'Barlow Condensed', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted); padding: 0 2rem; }
+    .ticker-sep { background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin: 0 0.5rem; }
+
+    /* ════════════════════════════════
+       SECCIÓN BASE
+    ════════════════════════════════ */
+    .section { padding: 6rem 3.5rem; }
+    .s-tag { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline-flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+    .s-tag::before { content: ''; display: block; width: 20px; height: 2px; background: var(--grad); flex-shrink: 0; }
+    .s-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(2.4rem, 4.5vw, 4rem); font-weight: 800; line-height: 0.95; text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 1.2rem; }
+    .s-title em { background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-style: normal; }
+    .s-desc { font-size: 0.95rem; color: var(--muted); line-height: 1.8; max-width: 500px; }
+
+    /* ════════════════════════════════
+       CONTADORES (STATS)
+    ════════════════════════════════ */
+    #stats {
+      background: var(--dark);
+      padding: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    #stats::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(212,43,43,0.06) 0%, rgba(234,88,12,0.04) 50%, rgba(245,158,11,0.06) 100%);
+      pointer-events: none;
+    }
+    /* top border gradient */
+    #stats::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--grad);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat-card {
+      padding: 3.5rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: background 0.4s;
+    }
+    .stat-card:last-child { border-right: none; }
+    .stat-card:hover { background: rgba(255,255,255,0.02); }
+
+    /* animated gradient orb behind each stat */
+    .stat-orb {
+      position: absolute;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0;
+      transition: opacity 0.6s;
+      pointer-events: none;
+    }
+    .stat-card:hover .stat-orb { opacity: 0.12; }
+    .stat-card:nth-child(1) .stat-orb { background: var(--red); }
+    .stat-card:nth-child(2) .stat-orb { background: var(--orange); }
+    .stat-card:nth-child(3) .stat-orb { background: var(--amber); }
+    .stat-card:nth-child(4) .stat-orb { background: var(--red-light); }
+
+    .stat-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .stat-number-wrap {
+      display: flex;
+      align-items: flex-start;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-counter {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(3rem, 5vw, 4.5rem);
+      font-weight: 900;
+      background: var(--grad-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      tabular-nums: true;
+    }
+
+    .stat-suffix {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--amber);
+      margin-left: 2px;
+      align-self: flex-start;
+      padding-top: 4px;
+    }
+
+    .stat-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .stat-bar {
+      width: 40px; height: 2px;
+      background: var(--grad);
+      margin-top: 1rem;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1s 0.5s;
+    }
+    .stat-card.counted .stat-bar { transform: scaleX(1); }
+
+    /* ════════════════════════════════
+       SERVICIOS — CARDS ANIMADAS
+    ════════════════════════════════ */
+    #servicios { background: var(--black); }
+    .servicios-top { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; margin-bottom: 4rem; }
+    .servicios-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    .serv-card {
+      background: var(--gray);
+      padding: 2.5rem 2rem 2rem;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s, box-shadow 0.4s;
+    }
+    .serv-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: var(--border-hot);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(245,158,11,0.08);
+    }
+
+    /* gradient glow bottom */
+    .serv-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--grad);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .serv-card:hover::before { transform: scaleX(1); }
+
+    /* inner glow */
+    .serv-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(245,158,11,0.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .serv-card:hover::after { opacity: 1; }
+
+    .serv-num { font-family: 'Barlow Condensed', sans-serif; font-size: 4.5rem; font-weight: 900; color: rgba(255,255,255,0.03); position: absolute; top: 0.5rem; right: 1rem; line-height: 1; pointer-events: none; transition: color 0.3s; }
+    .serv-card:hover .serv-num { color: rgba(245,158,11,0.06); }
+
+    .serv-icon-wrap {
+      width: 52px; height: 52px;
+      background: rgba(212,43,43,0.1);
+      border: 1px solid rgba(212,43,43,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 1.4rem;
+      border-radius: 2px;
+      transition: background 0.3s, border-color 0.3s, transform 0.4s;
+      position: relative; z-index: 1;
+    }
+    .serv-card:hover .serv-icon-wrap { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); transform: scale(1.1) rotate(-4deg); }
+
+    .serv-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1.25rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.8rem; line-height: 1.15; position: relative; z-index: 1; }
+    .serv-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.7; position: relative; z-index: 1; transition: color 0.3s; }
+    .serv-card:hover .serv-desc { color: #aaa; }
+
+    .serv-arrow { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 1.5rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: transparent; background: var(--grad-text); -webkit-background-clip: text; background-clip: text; opacity: 0; transform: translateX(-8px); transition: opacity 0.3s, transform 0.3s; position: relative; z-index: 1; }
+    .serv-card:hover .serv-arrow { opacity: 1; transform: translateX(0); }
+
+    /* ════════════════════════════════
+       VEHÍCULO
+    ════════════════════════════════ */
+    #vehiculo { background: var(--dark); }
+    .vehiculo-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .vehiculo-img { position: relative; }
+    .vehiculo-img img { width: 100%; height: 400px; object-fit: cover; filter: brightness(0.65) contrast(1.1) saturate(0.7); display: block; }
+    .vehiculo-img::before { content: ''; position: absolute; bottom: -10px; right: -10px; width: 55%; height: 55%; border: 2px solid var(--amber); z-index: -1; opacity: 0.4; }
+    .vehiculo-img .v-label { position: absolute; bottom: 1.2rem; left: 1.2rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.55); background: rgba(0,0,0,0.65); padding: 0.4rem 0.8rem; }
+    .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; margin-top: 2.5rem; }
+    .spec { background: var(--gray); padding: 1.1rem 1.3rem; border-left: 3px solid transparent; transition: border-color 0.25s, background 0.25s; }
+    .spec:hover { border-color: var(--amber); background: var(--gray-hi); }
+    .spec-l { font-size: 0.67rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+    .spec-v { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 700; }
+
+    /* ════════════════════════════════
+       POR QUÉ ELEGIRNOS — CARDS ANIMADAS
+    ════════════════════════════════ */
+    #porque { background: var(--black); }
+    .porque-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+
+    .dif-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 2.5rem; }
+
+    .dif-card {
+      background: var(--gray);
+      border: 1px solid var(--border);
+      padding: 2rem 1.8rem;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s, box-shadow 0.4s;
+    }
+    .dif-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-hot);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 20px rgba(245,158,11,0.06);
+    }
+    .dif-card::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--grad);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s;
+    }
+    .dif-card:hover::after { transform: scaleX(1); }
+
+    .dif-card-icon { font-size: 1.6rem; margin-bottom: 1rem; display: block; transition: transform 0.4s; }
+    .dif-card:hover .dif-card-icon { transform: scale(1.2) rotate(-5deg); }
+    .dif-card-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.05rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
+    .dif-card-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.65; transition: color 0.3s; }
+    .dif-card:hover .dif-card-desc { color: #999; }
+
+    .porque-visual { position: sticky; top: 88px; }
+    .pq-big { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(4rem, 8.5vw, 8rem); font-weight: 900; text-transform: uppercase; line-height: 0.88; color: transparent; -webkit-text-stroke: 1.5px rgba(255,255,255,0.06); user-select: none; }
+    .pq-box { background: var(--grad); padding: 2.5rem; margin-top: 2rem; clip-path: polygon(0 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%); }
+    .pq-box p { font-family: 'Barlow Condensed', sans-serif; font-size: 1.55rem; font-weight: 700; text-transform: uppercase; line-height: 1.2; }
+    .pq-box span { display: block; font-family: 'Barlow', sans-serif; font-size: 0.84rem; font-weight: 400; text-transform: none; opacity: 0.9; margin-top: 0.6rem; }
+
+    /* ════════════════════════════════
+       CÓMO FUNCIONA — CARDS ANIMADAS
+    ════════════════════════════════ */
+    #como { background: var(--dark); }
+    .como-top { display: grid; grid-template-columns: 1fr 2fr; gap: 4rem; align-items: end; margin-bottom: 4rem; }
+    .pasos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; position: relative; }
+
+    /* connecting line */
+    .pasos::before {
+      content: '';
+      position: absolute;
+      top: 2.8rem; left: calc(16.66% + 2rem); right: calc(16.66% + 2rem);
+      height: 1px;
+      background: linear-gradient(to right, var(--red), var(--orange), var(--amber));
+      opacity: 0.3;
+      z-index: 0;
+    }
+
+    .paso {
+      background: var(--gray);
+      border: 1px solid var(--border);
+      padding: 2.8rem 2rem;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s, box-shadow 0.4s;
+      z-index: 1;
+    }
+    .paso:hover {
+      transform: translateY(-8px);
+      border-color: var(--border-hot);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.45), 0 0 25px rgba(245,158,11,0.07);
+    }
+
+    .paso-circle {
+      width: 56px; height: 56px;
+      border: 2px solid var(--border-hot);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem;
+      background: var(--black);
+      transition: border-color 0.3s, transform 0.4s;
+      position: relative; z-index: 1;
+    }
+    .paso:hover .paso-circle { border-color: var(--amber); transform: rotate(10deg) scale(1.05); }
+
+    .paso-num { font-family: 'Barlow Condensed', sans-serif; font-size: 1.4rem; font-weight: 900; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .paso-bg { position: absolute; top: -0.5rem; right: 1rem; font-family: 'Barlow Condensed', sans-serif; font-size: 7rem; font-weight: 900; color: rgba(255,255,255,0.025); line-height: 1; pointer-events: none; transition: color 0.3s; }
+    .paso:hover .paso-bg { color: rgba(245,158,11,0.04); }
+    .paso h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.8rem; line-height: 1.1; }
+    .paso p { font-size: 0.84rem; color: var(--muted); line-height: 1.7; }
+    .paso-arr { display: block; margin-top: 1.5rem; font-size: 1.2rem; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; transition: transform 0.3s; }
+    .paso:hover .paso-arr { transform: translateX(4px); }
+
+    /* ════════════════════════════════
+       COBERTURA
+    ════════════════════════════════ */
+    #cobertura { background: var(--black); }
+    .cobertura-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .zonas { display: flex; flex-direction: column; margin-top: 2rem; }
+    .zona { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; transition: padding-left 0.25s, color 0.25s; cursor: default; }
+    .zona:first-child { border-top: 1px solid var(--border); }
+    .zona:hover { padding-left: 0.5rem; color: var(--amber); }
+    .zona-dot { width: 6px; height: 6px; background: var(--grad); clip-path: polygon(50% 0%,100% 50%,50% 100%,0% 50%); flex-shrink: 0; }
+    .cob-right { display: flex; flex-direction: column; gap: 10px; }
+
+    .cob-card {
+      background: var(--gray);
+      padding: 2rem 2.2rem;
+      border-left: 3px solid var(--red);
+      border-radius: 2px;
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), border-left-color 0.3s, box-shadow 0.35s;
+    }
+    .cob-card:hover { transform: translateX(6px); border-left-color: var(--amber); box-shadow: -4px 0 20px rgba(245,158,11,0.12); }
+    .cob-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .cob-card p { font-size: 0.84rem; color: var(--muted); line-height: 1.7; }
+    .cob-hot { background: var(--grad); border-left: none !important; }
+    .cob-hot p { color: rgba(255,255,255,0.88) !important; }
+    .cob-hot:hover { transform: translateY(-4px) !important; box-shadow: 0 12px 30px rgba(212,43,43,0.3) !important; }
+
+    /* ════════════════════════════════
+       TESTIMONIOS — CARDS ANIMADAS
+    ════════════════════════════════ */
+    #testimonios { background: var(--dark); }
+    .test-top { text-align: center; margin-bottom: 4rem; }
+    .test-top .s-tag { justify-content: center; display: flex; }
+    .test-top .s-tag::before { display: none; }
+    .test-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+    .test-card {
+      background: var(--gray);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      border-radius: 2px;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s, box-shadow 0.4s;
+    }
+    .test-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      border-color: var(--border-hot);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(245,158,11,0.07);
+    }
+    .test-card::before {
+      content: '"';
+      position: absolute; top: 1rem; right: 1.5rem;
+      font-family: 'Barlow Condensed', sans-serif; font-size: 6rem; font-weight: 900;
+      background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      opacity: 0.12; line-height: 1; transition: opacity 0.3s;
+    }
+    .test-card:hover::before { opacity: 0.22; }
+
+    .test-stars { font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 1.2rem; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .test-text { font-size: 0.91rem; color: var(--white); line-height: 1.75; margin-bottom: 2rem; font-style: italic; transition: color 0.3s; }
+    .test-card:hover .test-text { color: #ddd; }
+    .test-author { display: flex; align-items: center; gap: 0.9rem; }
+    .test-av { width: 40px; height: 40px; background: var(--grad); clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; color: white; flex-shrink: 0; transition: transform 0.4s; }
+    .test-card:hover .test-av { transform: rotate(15deg) scale(1.1); }
+    .test-name { font-family: 'Barlow Condensed', sans-serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .test-org { font-size: 0.75rem; color: var(--muted); }
+
+    /* ════════════════════════════════
+       CONTACTO
+    ════════════════════════════════ */
+    #contacto { background: var(--black); }
+    .contacto-layout { display: grid; grid-template-columns: 1fr 1.1fr; gap: 6rem; align-items: start; }
+    .c-infos { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 10px; }
+    .c-row {
+      display: flex; align-items: flex-start; gap: 1.2rem;
+      background: var(--gray); border: 1px solid var(--border);
+      padding: 1.3rem 1.5rem; border-radius: 2px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .c-row:hover { border-color: var(--border-hot); transform: translateX(4px); }
+    .c-icon { width: 40px; height: 40px; background: rgba(212,43,43,0.1); border: 1px solid rgba(212,43,43,0.2); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; border-radius: 2px; }
+    .c-label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.2rem; }
+    .c-val { font-size: 0.93rem; }
+    .form { display: flex; flex-direction: column; gap: 1.1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+    .fg { display: flex; flex-direction: column; gap: 0.45rem; }
+    .fg label { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+    .fg input, .fg select, .fg textarea { background: var(--gray); border: 1px solid var(--border); color: var(--white); padding: 0.85rem 1rem; font-family: 'Barlow', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.25s, box-shadow 0.25s; border-radius: 0; -webkit-appearance: none; }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--amber); box-shadow: 0 0 0 2px rgba(245,158,11,0.08); }
+    .fg select option { background: var(--gray); }
+    .fg textarea { resize: vertical; min-height: 88px; }
+    .form-or { display: flex; align-items: center; gap: 1rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--muted); }
+    .form-or::before, .form-or::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .btn-wsp { display: flex; align-items: center; justify-content: center; gap: 0.7rem; background: #25D366; color: white; padding: 1rem 2rem; font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%); transition: background 0.25s, transform 0.2s; }
+    .btn-wsp:hover { background: #1ebe58; transform: translateY(-2px); }
+
+    /* ════════════════════════════════
+       FOOTER
+    ════════════════════════════════ */
+    footer { background: var(--dark); border-top: 1px solid var(--border); padding: 4rem 3.5rem 2rem; position: relative; overflow: hidden; }
+    footer::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--grad); }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3.5rem; padding-bottom: 3rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+    .footer-brand p { font-size: 0.85rem; color: var(--muted); line-height: 1.75; max-width: 240px; margin-top: 1rem; }
+    .f-col h5 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.28em; text-transform: uppercase; background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1.2rem; }
+    .f-col ul { list-style: none; }
+    .f-col ul li { margin-bottom: 0.6rem; }
+    .f-col ul a { font-size: 0.85rem; color: var(--muted); text-decoration: none; transition: color 0.25s; }
+    .f-col ul a:hover { color: var(--amber); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .f-copy { font-size: 0.78rem; color: var(--muted); }
+    .f-copy span { background: var(--grad-text); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* ════════════════════════════════
+       WHATSAPP FLOAT
+    ════════════════════════════════ */
+    .wsp-float { position: fixed; bottom: 1.8rem; right: 1.8rem; z-index: 300; width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 18px rgba(37,211,102,0.45); transition: transform 0.3s, box-shadow 0.3s; text-decoration: none; }
+    .wsp-float:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(37,211,102,0.6); }
+    .wsp-float svg { width: 26px; height: 26px; fill: white; }
+    .wsp-ring { position: absolute; inset: -5px; border-radius: 50%; border: 2px solid #25D366; animation: ring 2.2s ease-out infinite; }
+
+    /* ════════════════════════════════
+       KEYFRAMES
+    ════════════════════════════════ */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes ring { 0% { opacity: 0.8; transform: scale(1); } 100% { opacity: 0; transform: scale(1.6); } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+    /* ════════════════════════════════
+       REVEAL
+    ════════════════════════════════ */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+    /* stagger delays */
+    .reveal:nth-child(2), .reveal-right:nth-child(2) { transition-delay: 0.1s; }
+    .reveal:nth-child(3), .reveal-right:nth-child(3) { transition-delay: 0.2s; }
+    .reveal:nth-child(4), .reveal-right:nth-child(4) { transition-delay: 0.3s; }
+
+    /* ════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════ */
+    @media (max-width: 1024px) {
+      nav { padding: 0 1.5rem; }
+      .section { padding: 5rem 1.5rem; }
+      .hero { grid-template-columns: 1fr; }
+      .hero::after { display: none; }
+      .hero-right { display: none; }
+      .hero-left { padding: 4rem 1.5rem; }
+      .servicios-top { grid-template-columns: 1fr; gap: 1.5rem; }
+      .servicios-grid { grid-template-columns: 1fr 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .stat-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .vehiculo-layout, .porque-layout, .cobertura-layout, .contacto-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .vehiculo-img::before { display: none; }
+      .porque-visual { position: static; }
+      .dif-grid { grid-template-columns: 1fr; }
+      .pasos { grid-template-columns: 1fr; }
+      .pasos::before { display: none; }
+      .como-top { grid-template-columns: 1fr; gap: 2rem; }
+      .test-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+      .servicios-grid { grid-template-columns: 1fr; }
+      .specs-grid { grid-template-columns: 1fr 1fr; }
+      .test-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; gap: 0.8rem; text-align: center; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <svg class="logo-svg" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gLogo" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#D42B2B"/>
+          <stop offset="100%" stop-color="#F59E0B"/>
+        </linearGradient>
+      </defs>
+      <circle cx="22" cy="22" r="21" fill="url(#gLogo)"/>
+      <circle cx="22" cy="22" r="18.5" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+      <text x="22" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="15" font-weight="900" fill="white" letter-spacing="1">MF</text>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-name">Marcelo Fiorino</span>
+      <span class="logo-sub">Transporte Privado de Pasajeros</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#vehiculo">Vehículo</a></li>
+    <li><a href="#porque">Nosotros</a></li>
+    <li><a href="#cobertura">Cobertura</a></li>
+    <li><a href="#testimonios">Opiniones</a></li>
+    <li><a href="#contacto" class="nav-cta"><span>Reservar</span></a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu(this)">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-left">
+    <p class="hero-tag">Transporte privado de pasajeros</p>
+    <h1 class="hero-title">
+      <span>Viaje</span>
+      <span class="t-red">Seguro,</span>
+      <span class="t-outline">Confiable</span>
+      <span class="t-amber">y a Tiempo.</span>
+    </h1>
+    <p class="hero-slogan">
+      <strong>Marcelo Fiorino</strong> — tu chofer de confianza para cada destino.
+      Aeropuertos, ciudades, excursiones y eventos en todo el país.
+    </p>
+    <div class="hero-btns">
+      <a href="https://wa.me/543466632747?text=Hola%20Marcelo%2C%20quiero%20reservar%20un%20traslado" target="_blank" class="btn-grad">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        <span>Reservar ahora</span>
+      </a>
+      <a href="#stats" class="btn-outline">Ver logros ↓</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1200&q=80" alt="Transfer privado" />
+      <div style="position:absolute;inset:0;background:linear-gradient(to right,var(--black) 0%,transparent 40%),linear-gradient(to top,var(--black) 0%,transparent 45%)"></div>
+    </div>
+    <div class="hero-watermark">MF</div>
+    <div class="cap-badge">
+      <div class="cap-n">4</div>
+      <div class="cap-l">Pasajeros</div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Aeropuertos <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Viajes Especiales <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Tour de Compras <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Excursiones <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Recitales <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Eventos VIP <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Corporativo <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Embarques Internacionales <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Pre-Viaje <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Aeropuertos <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Viajes Especiales <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Tour de Compras <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Excursiones <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Recitales <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Eventos VIP <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Corporativo <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Embarques Internacionales <span class="ticker-sep">◆</span></span>
+    <span class="ticker-item">Pre-Viaje <span class="ticker-sep">◆</span></span>
+  </div>
+</div>
+
+<!-- ════ CONTADORES ════ -->
+<section id="stats">
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-orb"></div>
+      <div class="stat-icon">😊</div>
+      <div class="stat-number-wrap">
+        <span class="stat-counter" data-target="10000" data-duration="2200">0</span>
+        <span class="stat-suffix">+</span>
+      </div>
+      <div class="stat-label">Clientes satisfechos</div>
+      <div class="stat-bar"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-orb"></div>
+      <div class="stat-icon">📅</div>
+      <div class="stat-number-wrap">
+        <span class="stat-counter" data-target="10" data-duration="1800">0</span>
+        <span class="stat-suffix">+</span>
+      </div>
+      <div class="stat-label">Años de experiencia</div>
+      <div class="stat-bar"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-orb"></div>
+      <div class="stat-icon">🛣️</div>
+      <div class="stat-number-wrap">
+        <span class="stat-counter" data-target="500" data-duration="2000">0</span>
+        <span class="stat-suffix">k km</span>
+      </div>
+      <div class="stat-label">Kilómetros recorridos</div>
+      <div class="stat-bar"></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-orb"></div>
+      <div class="stat-icon">⏱️</div>
+      <div class="stat-number-wrap">
+        <span class="stat-counter" data-target="100" data-duration="1600">0</span>
+        <span class="stat-suffix">%</span>
+      </div>
+      <div class="stat-label">Puntualidad garantizada</div>
+      <div class="stat-bar"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section id="servicios" class="section">
+  <div class="servicios-top">
+    <div class="reveal-left">
+      <p class="s-tag">Lo que ofrecemos</p>
+      <h2 class="s-title">NUESTROS<br><em>SERVICIOS</em></h2>
+    </div>
+    <p class="s-desc reveal-right">Trasladamos personas en todo el país con un servicio 100% privado, puntual y personalizado. Desde el aeropuerto hasta donde lo necesités.</p>
+  </div>
+  <div class="servicios-grid">
+    <div class="serv-card reveal">
+      <div class="serv-num">01</div>
+      <div class="serv-icon-wrap">✈️</div>
+      <h3 class="serv-name">Traslados al Aeropuerto</h3>
+      <p class="serv-desc">Monitoreamos tu vuelo en tiempo real. Llegamos antes para que no pierdas ningún embarque, sin importar el horario.</p>
+      <span class="serv-arrow">Ver más →</span>
+    </div>
+    <div class="serv-card reveal">
+      <div class="serv-num">02</div>
+      <div class="serv-icon-wrap">🛣️</div>
+      <h3 class="serv-name">Viajes Entre Ciudades</h3>
+      <p class="serv-desc">Conectamos destinos en todo el país. Viajá cómodo y sin escalas con un servicio directo y personalizado.</p>
+      <span class="serv-arrow">Ver más →</span>
+    </div>
+    <div class="serv-card reveal">
+      <div class="serv-num">03</div>
+      <div class="serv-icon-wrap">🗺️</div>
+      <h3 class="serv-name">Excursiones & Tours</h3>
+      <p class="serv-desc">Tour de compras, city tours, visitas a bodegas. Itinerarios flexibles adaptados a tus tiempos.</p>
+      <span class="serv-arrow">Ver más →</span>
+    </div>
+    <div class="serv-card reveal">
+      <div class="serv-num">04</div>
+      <div class="serv-icon-wrap">🎤</div>
+      <h3 class="serv-name">Recitales & Eventos VIP</h3>
+      <p class="serv-desc">Traslados para recitales, eventos especiales y reuniones de negocios. Discreción y puntualidad garantizadas.</p>
+      <span class="serv-arrow">Ver más →</span>
+    </div>
+  </div>
+</section>
+
+<!-- VEHÍCULO -->
+<section id="vehiculo" class="section">
+  <div class="vehiculo-layout">
+    <div class="vehiculo-img reveal-left">
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=80" alt="Kangoo Express Confort gris" />
+      <div class="v-label">Kangoo Express Confort</div>
+    </div>
+    <div class="reveal-right">
+      <p class="s-tag">La flota</p>
+      <h2 class="s-title">KANGOO<br>EXPRESS<br><em>CONFORT</em></h2>
+      <p class="s-desc">Moderna, cómoda y climatizada. Amplio espacio para pasajeros y equipaje, pensada para que cada viaje sea placentero.</p>
+      <div class="specs-grid">
+        <div class="spec"><div class="spec-l">Capacidad</div><div class="spec-v">Hasta 4 pasajeros</div></div>
+        <div class="spec"><div class="spec-l">Color</div><div class="spec-v">Gris</div></div>
+        <div class="spec"><div class="spec-l">Equipaje</div><div class="spec-v">Amplio maletero</div></div>
+        <div class="spec"><div class="spec-l">Climatización</div><div class="spec-v">Aire / Calefacción</div></div>
+        <div class="spec"><div class="spec-l">Servicio</div><div class="spec-v">100% Privado</div></div>
+        <div class="spec"><div class="spec-l">Disponibilidad</div><div class="spec-v">24 hs / 7 días</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POR QUÉ ELEGIRNOS -->
+<section id="porque" class="section">
+  <div class="porque-layout">
+    <div>
+      <p class="s-tag reveal">Por qué elegirnos</p>
+      <h2 class="s-title reveal">MÁS QUE<br>UN <em>TRASLADO</em></h2>
+      <p class="s-desc reveal">Marcelo Fiorino lleva años construyendo confianza viaje a viaje. Puntualidad, trato personal y seguridad en cada kilómetro.</p>
+      <div class="dif-grid" style="margin-top:2.5rem">
+        <div class="dif-card reveal">
+          <span class="dif-card-icon">⏱️</span>
+          <div class="dif-card-title">Puntualidad</div>
+          <p class="dif-card-desc">Llegamos antes. Monitoreamos vuelos y coordinamos cada detalle para que no pierdas ni un segundo.</p>
+        </div>
+        <div class="dif-card reveal">
+          <span class="dif-card-icon">🔒</span>
+          <div class="dif-card-title">100% Privado</div>
+          <p class="dif-card-desc">Tu traslado es exclusivo para vos y tu grupo. Sin paradas, sin compartir, sin esperas.</p>
+        </div>
+        <div class="dif-card reveal">
+          <span class="dif-card-icon">💬</span>
+          <div class="dif-card-title">Trato Directo</div>
+          <p class="dif-card-desc">Reservás directamente con Marcelo. Sin intermediarios, con respuesta inmediata por WhatsApp.</p>
+        </div>
+        <div class="dif-card reveal">
+          <span class="dif-card-icon">🌙</span>
+          <div class="dif-card-title">Disponible 24hs</div>
+          <p class="dif-card-desc">Vuelos de madrugada, viajes de urgencia. Siempre disponible cuando lo necesités.</p>
+        </div>
+      </div>
+    </div>
+    <div class="porque-visual reveal-right">
+      <div class="pq-big">VIAJE<br>SEGURO<br>Y A<br>TIEMPO</div>
+      <div class="pq-box">
+        <p>"Viaje Seguro,<br>Confiable y a Tiempo"
+          <span>El lema que define cada traslado. No es solo una frase — es el compromiso de Marcelo con cada uno de sus pasajeros.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CÓMO FUNCIONA -->
+<section id="como" class="section">
+  <div class="como-top">
+    <div class="reveal-left">
+      <p class="s-tag">El proceso</p>
+      <h2 class="s-title">ASÍ DE<br><em>SIMPLE</em></h2>
+    </div>
+    <p class="s-desc reveal-right">En tres pasos tenés tu traslado confirmado y listo para cuando lo necesités. Sin complicaciones.</p>
+  </div>
+  <div class="pasos">
+    <div class="paso reveal">
+      <div class="paso-bg">1</div>
+      <div class="paso-circle"><span class="paso-num">01</span></div>
+      <h4>Escribinos por WhatsApp</h4>
+      <p>Origen, destino, fecha, hora y cantidad de pasajeros. Respondemos al instante.</p>
+      <span class="paso-arr">→</span>
+    </div>
+    <div class="paso reveal">
+      <div class="paso-bg">2</div>
+      <div class="paso-circle"><span class="paso-num">02</span></div>
+      <h4>Coordinamos los Detalles</h4>
+      <p>Confirmamos disponibilidad, precio y detalles. Te enviamos la confirmación por escrito.</p>
+      <span class="paso-arr">→</span>
+    </div>
+    <div class="paso reveal">
+      <div class="paso-bg">3</div>
+      <div class="paso-circle"><span class="paso-num">03</span></div>
+      <h4>Te Buscamos a Tiempo</h4>
+      <p>El día del viaje llegamos con anticipación. Solo subís y disfrutás el recorrido.</p>
+      <span class="paso-arr">✓</span>
+    </div>
+  </div>
+</section>
+
+<!-- COBERTURA -->
+<section id="cobertura" class="section">
+  <div class="cobertura-layout">
+    <div>
+      <p class="s-tag reveal">Dónde llegamos</p>
+      <h2 class="s-title reveal">AMPLIA<br><em>COBERTURA</em></h2>
+      <p class="s-desc reveal">Operamos en todo el país. Si tu destino no aparece, escribinos — siempre hay solución.</p>
+      <div class="zonas">
+        <div class="zona reveal"><div class="zona-dot"></div>Aeroparque Jorge Newbery (AEP)</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Aeropuerto Internacional Ezeiza (EZE)</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Buenos Aires — CABA y Gran Buenos Aires</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Rosario — Santa Fe</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Córdoba Capital</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Mar del Plata y costa atlántica</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Mendoza y bodegas</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Salta, Jujuy y NOA</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Bariloche y Patagonia</div>
+        <div class="zona reveal"><div class="zona-dot"></div>Otros destinos — consultanos ◆</div>
+      </div>
+    </div>
+    <div class="cob-right">
+      <div class="cob-card reveal"><h4>🎤 Recitales & Eventos</h4><p>Traslados grupales a recitales, festivales y eventos. Coordinamos horarios de ida y vuelta.</p></div>
+      <div class="cob-card reveal"><h4>🛒 Tour de Compras</h4><p>Llevamos a clientes a shoppings y outlets. Recorrido organizado con paradas a elección.</p></div>
+      <div class="cob-card reveal"><h4>🌄 Pre-Viaje & Excursiones</h4><p>Desde glaciares hasta bodegas. Excursiones de día completo con toda la comodidad.</p></div>
+      <div class="cob-card cob-hot reveal">
+        <h4>¿No encontrás tu destino?</h4>
+        <p>Consultanos por cualquier ruta a medida. Siempre hay solución.</p>
+        <a href="https://wa.me/543466632747?text=Hola%20Marcelo%2C%20quiero%20consultar%20una%20ruta%20a%20medida" target="_blank" class="btn-outline" style="display:inline-flex;margin-top:1.2rem;border-color:rgba(255,255,255,0.4);color:white;">Consultar →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIOS -->
+<section id="testimonios" class="section">
+  <div class="test-top">
+    <p class="s-tag reveal">Opiniones reales</p>
+    <h2 class="s-title reveal">LO QUE DICEN<br>NUESTROS <em>PASAJEROS</em></h2>
+  </div>
+  <div class="test-grid">
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">"Tomé el servicio para ir a Ezeiza de madrugada. Marcelo puntual como siempre, el vehículo impecable y el trato excelente. Nunca más voy a tomar remís al aeropuerto."</p>
+      <div class="test-author"><div class="test-av">LP</div><div><div class="test-name">Laura P.</div><div class="test-org">Buenos Aires</div></div></div>
+    </div>
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">"Viajamos en familia a Mar del Plata. Comodidad total, espacioso para el equipaje y llegamos descansados. Mucho mejor que cualquier ómnibus."</p>
+      <div class="test-author"><div class="test-av">MR</div><div><div class="test-name">Martín R.</div><div class="test-org">Palermo, CABA</div></div></div>
+    </div>
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <p class="test-text">"Lo usamos para llevar clientes internacionales al aeropuerto. Siempre puntual, muy profesional y discreto. Es nuestro proveedor fijo para traslados corporativos."</p>
+      <div class="test-author"><div class="test-av">VG</div><div><div class="test-name">Valeria G.</div><div class="test-org">Gerente Comercial</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto" class="section">
+  <div class="contacto-layout">
+    <div>
+      <p class="s-tag reveal">Contacto</p>
+      <h2 class="s-title reveal">RESERVÁ TU<br><em>TRASLADO</em><br>AHORA</h2>
+      <div class="c-infos">
+        <div class="c-row reveal"><div class="c-icon">📱</div><div><div class="c-label">WhatsApp</div><div class="c-val">+54 3466 632747</div></div></div>
+        <div class="c-row reveal"><div class="c-icon">📍</div><div><div class="c-label">Base de operaciones</div><div class="c-val">Buenos Aires, Argentina</div></div></div>
+        <div class="c-row reveal"><div class="c-icon">🕐</div><div><div class="c-label">Disponibilidad</div><div class="c-val">24 horas, 7 días de la semana</div></div></div>
+        <div class="c-row reveal"><div class="c-icon">📸</div><div><div class="c-label">Instagram</div><div class="c-val"><a href="https://www.instagram.com/transfersmarcelo/" target="_blank" style="color:var(--amber);text-decoration:none;">@transfersmarcelo</a></div></div></div>
+      </div>
+    </div>
+    <div class="reveal-right">
+      <div class="form">
+        <div class="form-row">
+          <div class="fg"><label>Nombre</label><input type="text" placeholder="Tu nombre completo" /></div>
+          <div class="fg"><label>Teléfono</label><input type="tel" placeholder="+54 9 ..." /></div>
+        </div>
+        <div class="fg">
+          <label>Tipo de servicio</label>
+          <select>
+            <option value="">Seleccioná un servicio</option>
+            <option>Traslado al aeropuerto</option>
+            <option>Viaje entre ciudades</option>
+            <option>Excursión / City Tour</option>
+            <option>Tour de Compras</option>
+            <option>Recital / Evento</option>
+            <option>Corporativo / VIP</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <div class="fg"><label>Origen</label><input type="text" placeholder="Ciudad / dirección" /></div>
+          <div class="fg"><label>Destino</label><input type="text" placeholder="Ciudad / aeropuerto" /></div>
+        </div>
+        <div class="fg"><label>Detalles adicionales</label><textarea placeholder="Fecha, hora, cantidad de pasajeros, equipaje..."></textarea></div>
+        <div class="form-or">o reservá directo por</div>
+        <a href="https://wa.me/543466632747?text=Hola%20Marcelo%2C%20quiero%20reservar%20un%20traslado" target="_blank" class="btn-wsp">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          Escribir por WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">
+        <svg class="logo-svg" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="gLogo2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D42B2B"/><stop offset="100%" stop-color="#F59E0B"/></linearGradient></defs>
+          <circle cx="22" cy="22" r="21" fill="url(#gLogo2)"/>
+          <circle cx="22" cy="22" r="18.5" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+          <text x="22" y="28" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="15" font-weight="900" fill="white" letter-spacing="1">MF</text>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-name">Marcelo Fiorino</span>
+          <span class="logo-sub">Transporte Privado</span>
+        </div>
+      </a>
+      <p>Servicio de transporte privado de pasajeros. Viaje Seguro, Confiable y a Tiempo — en todo el país.</p>
+    </div>
+    <div class="f-col">
+      <h5>Servicios</h5>
+      <ul>
+        <li><a href="#servicios">Traslados aeropuerto</a></li>
+        <li><a href="#servicios">Entre ciudades</a></li>
+        <li><a href="#servicios">Excursiones y tours</a></li>
+        <li><a href="#servicios">Tour de compras</a></li>
+        <li><a href="#servicios">Recitales y eventos</a></li>
+        <li><a href="#servicios">Corporativo & VIP</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h5>Empresa</h5>
+      <ul>
+        <li><a href="#porque">Quiénes somos</a></li>
+        <li><a href="#vehiculo">Nuestro vehículo</a></li>
+        <li><a href="#como">Cómo funciona</a></li>
+        <li><a href="#cobertura">Cobertura</a></li>
+        <li><a href="#testimonios">Testimonios</a></li>
+      </ul>
+    </div>
+    <div class="f-col">
+      <h5>Contacto</h5>
+      <ul>
+        <li><a href="https://wa.me/543466632747" target="_blank">+54 3466 632747</a></li>
+        <li><a href="https://www.instagram.com/transfersmarcelo/" target="_blank">@transfersmarcelo</a></li>
+        <li><a href="#contacto">Hacer una reserva</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="f-copy">© 2025 <span>Marcelo Fiorino — Transporte Privado de Pasajeros</span>. Todos los derechos reservados.</p>
+    <p class="f-copy">Hecho con <span>♥</span> en Argentina</p>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/543466632747?text=Hola%20Marcelo%2C%20quiero%20reservar%20un%20traslado" target="_blank" class="wsp-float" aria-label="WhatsApp">
+  <div class="wsp-ring"></div>
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+<script>
+/* ══ Mobile menu ══ */
+function toggleMenu(btn) {
+  const links = document.querySelector('.nav-links');
+  const open = links.style.display === 'flex';
+  links.style.cssText = open ? '' :
+    'display:flex;flex-direction:column;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(10,10,10,0.97);justify-content:center;align-items:center;gap:2rem;z-index:199;font-size:1.4rem;';
+  const s = btn.querySelectorAll('span');
+  s[0].style.transform = open ? '' : 'rotate(45deg) translate(5px,5px)';
+  s[1].style.opacity   = open ? '1' : '0';
+  s[2].style.transform = open ? '' : 'rotate(-45deg) translate(5px,-5px)';
+}
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    document.querySelector('.nav-links').style.cssText = '';
+    document.querySelector('.hamburger').querySelectorAll('span').forEach(s => s.style.cssText = '');
+  });
+});
+
+/* ══ Nav shrink ══ */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.height = window.scrollY > 60 ? '56px' : '68px';
+});
+
+/* ══ Scroll reveal ══ */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); revObs.unobserve(e.target); }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => revObs.observe(el));
+
+/* ══ COUNTER ANIMATION ══ */
+function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+
+function animateCounter(el) {
+  const target = parseInt(el.getAttribute('data-target'));
+  const duration = parseInt(el.getAttribute('data-duration')) || 2000;
+  const start = performance.now();
+  const card = el.closest('.stat-card');
+
+  function update(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeOutQuart(progress);
+    const current = Math.round(eased * target);
+
+    // Format with thousands separator
+    el.textContent = current.toLocaleString('es-AR');
+
+    if (progress < 1) {
+      requestAnimationFrame(update);
+    } else {
+      el.textContent = target.toLocaleString('es-AR');
+      if (card) card.classList.add('counted');
+    }
+  }
+  requestAnimationFrame(update);
+}
+
+/* ══ Trigger counters when #stats enters viewport ══ */
+const statsObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      // Small stagger between cards
+      document.querySelectorAll('.stat-counter').forEach((counter, i) => {
+        setTimeout(() => animateCounter(counter), i * 180);
+      });
+      statsObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+const statsSection = document.getElementById('stats');
+if (statsSection) statsObs.observe(statsSection);
+</script>
+</body>
+</html>
